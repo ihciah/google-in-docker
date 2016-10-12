@@ -1,0 +1,73 @@
+server {
+    listen 443 ssl http2;
+    
+    server_name gs.ihc.im;
+    # Replace all "example.com" with your domain
+
+    ssl_certificate     /etc/nginx/certs/server.crt;
+    ssl_certificate_key /etc/nginx/certs/server.key;
+    #ssl_trusted_certificate ssl/server.trusted.crt;
+    
+    proxy_pass_header Server;
+    proxy_redirect off;
+    proxy_set_header Accept-Encoding '';
+
+    location /css {
+        valid_referers *.ihc.im;
+        if ($invalid_referer) {
+            return 403;
+        }
+        sub_filter 'fonts.gstatic.com' 'gs.ihc.im';
+        sub_filter_once off;
+        sub_filter_types text/css;
+        
+        proxy_set_header Host fonts.googleapis.com;
+        proxy_pass https://fonts.googleapis.com;
+        
+        proxy_cache STATIC;
+        proxy_cache_valid  200 304 365d;
+        proxy_cache_key $host$uri$is_args$args;
+        expires max;
+    }
+
+    location /icon {
+        valid_referers *.ihc.im;
+        if ($invalid_referer) {
+            return 403;
+        }
+        sub_filter 'fonts.gstatic.com' 'gs.ihc.im';
+        sub_filter_once off;
+        sub_filter_types text/css;
+        
+        proxy_set_header Host fonts.googleapis.com;
+        proxy_pass https://fonts.googleapis.com;
+        
+        proxy_cache STATIC;
+        proxy_cache_valid  200 304 365d;
+        proxy_cache_key $host$uri$is_args$args;
+        expires max;
+    }
+    
+    location /avatar/ {
+        valid_referers *.ihc.im;
+        if ($invalid_referer) {
+            return 403;
+        }
+        proxy_set_header Host secure.gravatar.com;
+        proxy_pass https://secure.gravatar.com;
+    }
+
+    location / {
+        valid_referers *.ihc.im;
+        if ($invalid_referer) {
+            return 403;
+        }
+        proxy_set_header Host fonts.gstatic.com;
+        proxy_pass https://fonts.gstatic.com;
+        
+        proxy_cache STATIC;
+        proxy_cache_valid  200 304 365d;
+        proxy_cache_key $host$uri$is_args$args;
+        expires max;
+    }
+ }
