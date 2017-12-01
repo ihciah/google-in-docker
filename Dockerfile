@@ -2,7 +2,7 @@ FROM debian:jessie
 
 ENV NGINX_VERSION 1.11.4
 ENV OPENSSL_VERSION 1.0.2j
-ENV ZLIB_VERSION 1.2.8
+ENV ZLIB_VERSION 1.2.11
 ENV PCRE_VERSION 8.38
 
 RUN apt-get update && apt-get install -y build-essential \
